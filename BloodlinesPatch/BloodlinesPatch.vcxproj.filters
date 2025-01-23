@@ -13,16 +13,22 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\SafetyHook">
+      <UniqueIdentifier>{0e9d760e-188e-4140-9ee0-dec0f1c73ed4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\SafetyHook">
+      <UniqueIdentifier>{4e71dbc0-0dcd-4915-bc7d-35817292bce9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Vendor\SafetyHook\safetyhook.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\SafetyHook</Filter>
     </ClCompile>
     <ClCompile Include="..\Vendor\SafetyHook\Zydis.c">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\SafetyHook</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -30,10 +36,10 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Vendor\SafetyHook\safetyhook.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\SafetyHook</Filter>
     </ClInclude>
     <ClInclude Include="..\Vendor\SafetyHook\Zydis.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\SafetyHook</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
