@@ -4,19 +4,23 @@
 
 #include "safetyhook.hpp"
 
-void RotDoorBlockedHook(uintptr_t _this, uintptr_t pOther) { Vampire::BaseDoorBlocked(_this, pOther); }
+SafetyHookMid blockedFramesHook {};
+void BlockedFramesHook(SafetyHookContext& ctx) { ctx.ecx = 2; }
 
-extern "C" __declspec(dllexport) DWORD WINAPI loaded_vampire(LPVOID lpParam)
+extern "C" __declspec(dllexport) bool loaded_vampire()
 {
-    Vampire::Msg("Initialized Bloodlines Patch.\n");
+    // Initialize Vampire addresses.
+    Vampire::gpGlobals
+        = *(Vampire::CGlobalVarsBase**)(reinterpret_cast<char*>(GetModuleHandleA("vampire.dll")) + VAMPIRE_STEAM_GPGLOBALS_OFFSET);
+    Vampire::BaseDoorBlocked = reinterpret_cast<Vampire::BaseDoorBlockedFn>(
+        reinterpret_cast<char*>(GetModuleHandleA("vampire.dll") + VAMPIRE_STEAM_BASEDOORBLOCKED_OFFSET));
+    Vampire::Msg = reinterpret_cast<Vampire::MsgFn>(GetProcAddress(GetModuleHandleA("tier0.dll"), "Msg"));
 
-    SafetyHookInline rotDoorBlockedHk = safetyhook::create_inline(
-        reinterpret_cast<char*>(GetModuleHandleA("vampire.dll") + VAMPIRE_STEAM_ROTDOORBLOCKED_OFFSET), RotDoorBlockedHook);
+    // Initialize Door FPS Fix.
+    blockedFramesHook = safetyhook::create_mid(
+        reinterpret_cast<char*>(GetModuleHandleA("vampire.dll")) + VAMPIRE_STEAM_BLOCKEDFRAMES_OFFSET, BlockedFramesHook);
 
     return 0;
 }
 
-BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
-{
-    return TRUE;
-}
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) { return TRUE; }

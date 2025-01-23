@@ -17,15 +17,13 @@ struct CGlobalVarsBase {
     float curtime;
     float frametime;
 };
-CGlobalVarsBase* gpGlobals
-    = *(CGlobalVarsBase**)(reinterpret_cast<char*>(GetModuleHandleA("vampire.dll")) + VAMPIRE_STEAM_GPGLOBALS_OFFSET);
+CGlobalVarsBase* gpGlobals = nullptr;
 
 typedef void (*BaseDoorBlockedFn)(uintptr_t _this, uintptr_t pOther);
-BaseDoorBlockedFn BaseDoorBlocked = reinterpret_cast<BaseDoorBlockedFn>(
-    reinterpret_cast<char*>(GetModuleHandleA("vampire.dll") + VAMPIRE_STEAM_BASEDOORBLOCKED_OFFSET));
+BaseDoorBlockedFn BaseDoorBlocked = nullptr;
 
 // (tier0.dll)
 typedef void (*MsgFn)(const char* pMsgFormat, ...);
-MsgFn Msg = reinterpret_cast<MsgFn>(GetProcAddress(GetModuleHandleA("tier0.dll"), "Msg"));
+MsgFn Msg = nullptr;
 
 } // namespace Vampire
