@@ -3,6 +3,7 @@
 #include <Windows.h>
 
 #define VAMPIRE_STEAM_GPGLOBALS_OFFSET 0x70B228
+#define VAMPIRE_STEAM_BLOCKEDFRAMES_OFFSET 0xF3A6D
 
 namespace Vampire {
 

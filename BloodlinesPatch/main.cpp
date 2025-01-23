@@ -1,12 +1,30 @@
 #include <Windows.h>
+#include <map>
 
 #include "VampireGame.h"
 
 #include "safetyhook.hpp"
 
+struct CRotDoorTimer {
+    float m_unblockTime {0.0f};
+};
+std::map<uintptr_t, CRotDoorTimer> rotDoorTimers;
+
+void BlockedFramesHook(SafetyHookContext& ctx)
+{
+    ctx.ecx = 2;
+}
+
 DWORD WINAPI BloodlinesPatchThread(LPVOID lpParam)
 {
-    Vampire::Msg("Initialized Bloodlines Patch.");
+    Vampire::Msg("Initialized Bloodlines Patch.\n");
+
+    SafetyHookMid hook = safetyhook::create_mid(
+        reinterpret_cast<char*>(GetModuleHandleA("vampire.dll")) + VAMPIRE_STEAM_BLOCKEDFRAMES_OFFSET, BlockedFramesHook);
+
+    for (;;) {
+        ;
+    }
 
     return 0;
 }
