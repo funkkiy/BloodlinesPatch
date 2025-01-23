@@ -1,39 +1,22 @@
 #include <Windows.h>
-#include <map>
 
 #include "VampireGame.h"
 
 #include "safetyhook.hpp"
 
-struct CRotDoorTimer {
-    float m_unblockTime {0.0f};
-};
-std::map<uintptr_t, CRotDoorTimer> rotDoorTimers;
+void RotDoorBlockedHook(uintptr_t _this, uintptr_t pOther) { Vampire::BaseDoorBlocked(_this, pOther); }
 
-void BlockedFramesHook(SafetyHookContext& ctx)
-{
-    ctx.ecx = 2;
-}
-
-DWORD WINAPI BloodlinesPatchThread(LPVOID lpParam)
+extern "C" __declspec(dllexport) DWORD WINAPI loaded_vampire(LPVOID lpParam)
 {
     Vampire::Msg("Initialized Bloodlines Patch.\n");
 
-    SafetyHookMid hook = safetyhook::create_mid(
-        reinterpret_cast<char*>(GetModuleHandleA("vampire.dll")) + VAMPIRE_STEAM_BLOCKEDFRAMES_OFFSET, BlockedFramesHook);
-
-    for (;;) {
-        ;
-    }
+    SafetyHookInline rotDoorBlockedHk = safetyhook::create_inline(
+        reinterpret_cast<char*>(GetModuleHandleA("vampire.dll") + VAMPIRE_STEAM_ROTDOORBLOCKED_OFFSET), RotDoorBlockedHook);
 
     return 0;
 }
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
-    if (fdwReason == DLL_PROCESS_ATTACH) {
-        CreateThread(nullptr, 0, BloodlinesPatchThread, nullptr, 0, nullptr);
-    }
-
     return TRUE;
 }
