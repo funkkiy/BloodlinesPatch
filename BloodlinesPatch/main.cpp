@@ -1,5 +1,5 @@
-#include <cstdint>
 #include <Windows.h>
+#include <cstdint>
 
 #include "VampireGame.h"
 #include "safetyhook.hpp"
@@ -37,14 +37,19 @@ extern "C" __declspec(dllexport) bool loaded_vampire()
     // Initialize Vampire addresses.
     Vampire::VampireBase = reinterpret_cast<uint8_t*>(GetModuleHandleA("vampire.dll"));
     Vampire::Tier0Base = reinterpret_cast<uint8_t*>(GetModuleHandleA("tier0.dll"));
-    Vampire::Msg = reinterpret_cast<Vampire::MsgFn>(GetProcAddress(reinterpret_cast<HMODULE>(Vampire::Tier0Base), "Msg"));
+
+    // Abort before patching if the module base addresses are invalid.
+    if (!Vampire::VampireBase || !Vampire::Tier0Base) {
+        return 0;
+    }
 
     // Grab gpGlobals from DLLInit.
     g_dllInitHook = safetyhook::create_inline(Vampire::VampireBase + VAMPIRE_STEAM_DLLINIT_OFFSET, DllInitHook);
 
     // Initialize Door FPS Fix.
     g_blockedFramesHook = safetyhook::create_mid(Vampire::VampireBase + VAMPIRE_STEAM_BLOCKEDFRAMES_OFFSET, BlockedFramesHook);
-    g_toggleAngularMoveHook = safetyhook::create_mid(Vampire::VampireBase + VAMPIRE_STEAM_ANGULARMOVESPEED_OFFSET, ToggleAngularMoveHook);
+    g_toggleAngularMoveHook
+        = safetyhook::create_mid(Vampire::VampireBase + VAMPIRE_STEAM_ANGULARMOVESPEED_OFFSET, ToggleAngularMoveHook);
 
     return 0;
 }
